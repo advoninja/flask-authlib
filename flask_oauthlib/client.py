@@ -348,11 +348,17 @@ class OAuthRemoteApp(object):
         req.get_method = lambda: method.upper()
         try:
             resp = http.urlopen(req)
+            print "Http_request try"
+            print resp
             content = resp.read()
+            print content
             resp.close()
             return resp, content
         except http.HTTPError as resp:
+            print "Http_request except"
+            print resp
             content = resp.read()
+            print content
             resp.close()
             return resp, content
 
