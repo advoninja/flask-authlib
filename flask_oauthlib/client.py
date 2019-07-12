@@ -584,6 +584,8 @@ class OAuthRemoteApp(object):
             'client_secret': self.consumer_secret,
             'redirect_uri': session.get('%s_oauthredir' % self.name)
         }
+        print "remote_args"
+        print remote_args
         log.debug('Prepare oauth2 remote args %r', remote_args)
         remote_args.update(self.access_token_params)
         if self.access_token_method == 'POST':
@@ -593,6 +595,8 @@ class OAuthRemoteApp(object):
                 data=to_bytes(body, self.encoding),
                 method=self.access_token_method,
             )
+            print "POST"
+            print resp
         elif self.access_token_method == 'GET':
             qs = client.prepare_request_body(**remote_args)
             url = self.expand_url(self.access_token_url)
@@ -601,6 +605,8 @@ class OAuthRemoteApp(object):
                 url,
                 method=self.access_token_method,
             )
+            print "GET"
+            print resp
         else:
             raise OAuthException(
                 'Unsupported access_token_method: %s' %
@@ -608,6 +614,8 @@ class OAuthRemoteApp(object):
             )
 
         data = parse_response(resp, content, content_type=self.content_type)
+        print "Final Response"
+        print resp
         if resp.code not in (200, 201):
             raise OAuthException(
                 'Invalid response from %s' % self.name,
