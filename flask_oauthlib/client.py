@@ -345,7 +345,15 @@ class OAuthRemoteApp(object):
 
         log.debug('Request %r with %r method' % (uri, method))
         req = http.Request(uri, headers=headers, data=data)
+        print "uri"
+        print uri
+        print "headers"
+        print headers
+        print "data"
+        print data
         req.get_method = lambda: method.upper()
+        print "method"
+        print req.get_method
         try:
             resp = http.urlopen(req)
             print "Http_request try"
