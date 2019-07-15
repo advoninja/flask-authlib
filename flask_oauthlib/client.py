@@ -353,7 +353,7 @@ class OAuthRemoteApp(object):
         print data
         req.get_method = lambda: method.upper()
         print "method"
-        print req.get_method
+        print method
         try:
             resp = http.urlopen(req)
             print "Http_request try"
@@ -610,7 +610,7 @@ class OAuthRemoteApp(object):
                 method=self.access_token_method,
             )
             print "POST"
-            print resp
+            print resp.read()
         elif self.access_token_method == 'GET':
             qs = client.prepare_request_body(**remote_args)
             url = self.expand_url(self.access_token_url)
@@ -620,7 +620,7 @@ class OAuthRemoteApp(object):
                 method=self.access_token_method,
             )
             print "GET"
-            print resp
+            print resp.read()
         else:
             raise OAuthException(
                 'Unsupported access_token_method: %s' %
