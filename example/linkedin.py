@@ -33,8 +33,6 @@ def index():
 
 @app.route('/login')
 def login():
-    print "/login callback"
-    print url_for('authorized', _external=True)
     return linkedin.authorize(callback=url_for('authorized', _external=True))
 
 
@@ -52,13 +50,8 @@ def authorized(resp):
             request.args['error_reason'],
             request.args['error_description']
         )
-    print "/login/authorized response"
-    print resp
-    print resp.read()
     session['linkedin_token'] = (resp['access_token'], '')
     me = linkedin.get('people/~')
-    print "data returning"
-    print me.data
     return jsonify(me.data)
 
 

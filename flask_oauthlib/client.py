@@ -509,6 +509,8 @@ class OAuthRemoteApp(object):
                 state=state,
                 **params
             )
+            print "callback url"
+            print url
         return redirect(url)
 
     def tokengetter(self, f):
