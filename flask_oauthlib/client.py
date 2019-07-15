@@ -596,6 +596,8 @@ class OAuthRemoteApp(object):
         """Handles an oauth2 authorization response."""
 
         client = self.make_client()
+        print "Session handle_oauth2_response"
+        print session
         remote_args = {
             'code': request.args.get('code'),
             'client_secret': self.consumer_secret,
