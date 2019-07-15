@@ -502,6 +502,8 @@ class OAuthRemoteApp(object):
             print "callback"
             print callback
             session['%s_oauthredir' % self.name] = callback
+            print "session after addition {}".format(session)
+            print "name after addition {}".format(self.name)
             url = client.prepare_request_uri(
                 self.expand_url(self.authorize_url),
                 redirect_uri=callback,
