@@ -499,7 +499,8 @@ class OAuthRemoteApp(object):
             if callable(state):
                 # state can be function for generate a random string
                 state = state()
-
+            print "callback"
+            print callback
             session['%s_oauthredir' % self.name] = callback
             url = client.prepare_request_uri(
                 self.expand_url(self.authorize_url),
