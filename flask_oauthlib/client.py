@@ -608,7 +608,7 @@ class OAuthRemoteApp(object):
             'client_secret': self.consumer_secret,
             'redirect_uri': session.get('%s_oauthredir' % self.name)
         }
-        print "base_url {}".format(base_url)
+        print "base_url {}".format(request.args.get('base_url'))
         if not remote_args.get('redirect_uri'):
             remote_args['redirect_uri'] = request.args.get('base_url')
         print "remote_args"
