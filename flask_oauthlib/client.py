@@ -611,7 +611,7 @@ class OAuthRemoteApp(object):
         print "base_url {}".format(request.base_url)
         if not remote_args.get('redirect_uri'):
             print "Setting redirect_uri externally"
-            remote_args['redirect_uri'] = request.base_url
+            remote_args['redirect_uri'] = request.base_url.replace('http:', 'https:')
         print "remote_args"
         print remote_args
         log.debug('Prepare oauth2 remote args %r', remote_args)
