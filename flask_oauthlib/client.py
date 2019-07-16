@@ -515,6 +515,7 @@ class OAuthRemoteApp(object):
             print url
         response = redirect(url)
         print "response {}".format(response)
+        print "session after redirect {}".format(session)
         return response
 
     def tokengetter(self, f):
