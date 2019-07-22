@@ -470,9 +470,11 @@ class OAuthRemoteApp(object):
 
         if self.request_token_url:
             token = self.generate_request_token(callback)[0]
+            print "authorize generate_request_token token {}".format(token)
             url = '%s?oauth_token=%s' % (
                 self.expand_url(self.authorize_url), url_quote(token)
             )
+            print "authorize url {}".format(url)
             if params:
                 url += '&' + url_encode(params)
         else:
@@ -557,7 +559,9 @@ class OAuthRemoteApp(object):
                 type='token_generation_failed'
             )
         tup = (data['oauth_token'], data['oauth_token_secret'])
+        print "inside generate_request_token tup {}".format(tup)
         session['%s_oauthtok' % self.name] = tup
+        print "inside generate_request_token session {}".format(session)
         return tup
 
     def get_request_token(self):
