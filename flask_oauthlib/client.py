@@ -414,6 +414,7 @@ class OAuthRemoteApp(object):
         :param token: an optional token to pass, if it is None, token will
                       be generated be tokengetter.
         """
+        print "Inside request"
 
         headers = dict(headers or {})
         if not token:
@@ -469,7 +470,10 @@ class OAuthRemoteApp(object):
         params.update(**kwargs)
 
         if self.request_token_url:
-            token = self.generate_request_token(callback)[0]
+            token_secret = self.generate_request_token(callback)
+            token = token_secret[0]
+            # secret = self.generate_request_token(callback)[1]
+            # print "secret {}".format(secret)
             print "authorize generate_request_token token {}".format(token)
             url = '%s?oauth_token=%s' % (
                 self.expand_url(self.authorize_url), url_quote(token)
@@ -477,6 +481,8 @@ class OAuthRemoteApp(object):
             print "authorize url {}".format(url)
             if params:
                 url += '&' + url_encode(params)
+                
+            
         else:
             assert callback is not None, 'Callback is required OAuth2'
 
@@ -518,6 +524,8 @@ class OAuthRemoteApp(object):
         response = redirect(url)
         print "response {}".format(response)
         print "session after redirect {}".format(session)
+        # response.set_cookie('_secret_tw', secret)
+        response.set_cookie('_tok_tw', str(token_secret))
         return response
 
     def tokengetter(self, f):
@@ -547,6 +555,7 @@ class OAuthRemoteApp(object):
         )
         log.debug('Generate request token header %r', headers)
         resp, content = self.http_request(uri, headers)
+        print "generate_request_token res  {} content {} uri {} headrers {}".format(resp,content,uri,headers)
         if resp.code not in (200, 201):
             raise OAuthException(
                 'Failed to generate request token',
@@ -561,6 +570,7 @@ class OAuthRemoteApp(object):
         tup = (data['oauth_token'], data['oauth_token_secret'])
         print "inside generate_request_token tup {}".format(tup)
         session['%s_oauthtok' % self.name] = tup
+        
         print "inside generate_request_token session {}".format(session)
         return tup
 
@@ -582,6 +592,10 @@ class OAuthRemoteApp(object):
         print "handle_oauth1 client.verifier"
         print client.verifier
         tup = session.get('%s_oauthtok' % self.name)
+        print '_tok_tw and session', request.cookies.get('_tok_tw'), tup
+        if not tup and request.cookies.get('_tok_tw'):
+            print 'tup null', request.cookies.get('_tok_tw')
+            tup = eval(request.cookies.get('_tok_tw'))
         print "handle_oauth1 tup"
         print tup
         if not tup:
@@ -670,6 +684,8 @@ class OAuthRemoteApp(object):
     def authorized_handler(self, f):
         @wraps(f)
         def decorated(*args, **kwargs):
+            print "Inside authorized_handler"
+            print "session authorized_handler {}".format(session)
             if 'oauth_verifier' in request.args:
                 try:
                     data = self.handle_oauth1_response()
