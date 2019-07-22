@@ -468,7 +468,6 @@ class OAuthRemoteApp(object):
         """
         params = dict(self.request_token_params) or {}
         params.update(**kwargs)
-
         if self.request_token_url:
             token_secret = self.generate_request_token(callback)
             token = token_secret[0]
@@ -525,7 +524,8 @@ class OAuthRemoteApp(object):
         print "response {}".format(response)
         print "session after redirect {}".format(session)
         # response.set_cookie('_secret_tw', secret)
-        response.set_cookie('_tok_tw', str(token_secret))
+        if self.request_token_url:
+            response.set_cookie('_tok_tw', str(token_secret))
         return response
 
     def tokengetter(self, f):
