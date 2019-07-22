@@ -569,9 +569,17 @@ class OAuthRemoteApp(object):
 
     def handle_oauth1_response(self):
         """Handles an oauth1 authorization response."""
+        print "Session handle_oauth1_response"
+        print session
         client = self.make_client()
+        print "handle_oauth1 client"
+        print client
         client.verifier = request.args.get('oauth_verifier')
+        print "handle_oauth1 client.verifier"
+        print client.verifier
         tup = session.get('%s_oauthtok' % self.name)
+        print "handle_oauth1 tup"
+        print tup
         if not tup:
             raise OAuthException(
                 'Token not found, maybe you disabled cookie',
