@@ -345,26 +345,13 @@ class OAuthRemoteApp(object):
 
         log.debug('Request %r with %r method' % (uri, method))
         req = http.Request(uri, headers=headers, data=data)
-        print "uri"
-        print uri
-        print "headers"
-        print headers
-        print "data"
-        print data
         req.get_method = lambda: method.upper()
-        print "method"
-        print method
         try:
             resp = http.urlopen(req)
-            print "Http_request try"
-            print resp
             content = resp.read()
-            print content
             resp.close()
             return resp, content
         except http.HTTPError as resp:
-            print "Http_request except"
-            print resp
             content = resp.read()
             print content
             resp.close()
@@ -414,7 +401,6 @@ class OAuthRemoteApp(object):
         :param token: an optional token to pass, if it is None, token will
                       be generated be tokengetter.
         """
-        print "Inside request"
 
         headers = dict(headers or {})
         if not token:
@@ -471,13 +457,9 @@ class OAuthRemoteApp(object):
         if self.request_token_url:
             token_secret = self.generate_request_token(callback)
             token = token_secret[0]
-            # secret = self.generate_request_token(callback)[1]
-            # print "secret {}".format(secret)
-            print "authorize generate_request_token token {}".format(token)
             url = '%s?oauth_token=%s' % (
                 self.expand_url(self.authorize_url), url_quote(token)
             )
-            print "authorize url {}".format(url)
             if params:
                 url += '&' + url_encode(params)
                 
@@ -506,11 +488,7 @@ class OAuthRemoteApp(object):
             if callable(state):
                 # state can be function for generate a random string
                 state = state()
-            print "callback"
-            print callback
             session['%s_oauthredir' % self.name] = callback
-            print "session after addition {}".format(session)
-            print "name after addition {}".format(self.name)
             url = client.prepare_request_uri(
                 self.expand_url(self.authorize_url),
                 redirect_uri=callback,
@@ -518,11 +496,8 @@ class OAuthRemoteApp(object):
                 state=state,
                 **params
             )
-            print "callback url"
-            print url
         response = redirect(url)
         print "response {}".format(response)
-        print "session after redirect {}".format(session)
         # response.set_cookie('_secret_tw', secret)
         if self.request_token_url:
             response.set_cookie('_tok_tw', str(token_secret))
@@ -568,10 +543,8 @@ class OAuthRemoteApp(object):
                 type='token_generation_failed'
             )
         tup = (data['oauth_token'], data['oauth_token_secret'])
-        print "inside generate_request_token tup {}".format(tup)
         session['%s_oauthtok' % self.name] = tup
         
-        print "inside generate_request_token session {}".format(session)
         return tup
 
     def get_request_token(self):
@@ -583,21 +556,11 @@ class OAuthRemoteApp(object):
 
     def handle_oauth1_response(self):
         """Handles an oauth1 authorization response."""
-        print "Session handle_oauth1_response"
-        print session
         client = self.make_client()
-        print "handle_oauth1 client"
-        print client
         client.verifier = request.args.get('oauth_verifier')
-        print "handle_oauth1 client.verifier"
-        print client.verifier
         tup = session.get('%s_oauthtok' % self.name)
-        print '_tok_tw and session', request.cookies.get('_tok_tw'), tup
         if not tup and request.cookies.get('_tok_tw'):
-            print 'tup null', request.cookies.get('_tok_tw')
             tup = eval(request.cookies.get('_tok_tw'))
-        print "handle_oauth1 tup"
-        print tup
         if not tup:
             raise OAuthException(
                 'Token not found, maybe you disabled cookie',
@@ -627,19 +590,13 @@ class OAuthRemoteApp(object):
         """Handles an oauth2 authorization response."""
 
         client = self.make_client()
-        print "Session handle_oauth2_response"
-        print session
         remote_args = {
             'code': request.args.get('code'),
             'client_secret': self.consumer_secret,
             'redirect_uri': session.get('%s_oauthredir' % self.name)
         }
-        print "base_url {}".format(request.base_url)
         if not remote_args.get('redirect_uri'):
-            print "Setting redirect_uri externally"
             remote_args['redirect_uri'] = request.base_url.replace('http:', 'https:')
-        print "remote_args"
-        print remote_args
         log.debug('Prepare oauth2 remote args %r', remote_args)
         remote_args.update(self.access_token_params)
         if self.access_token_method == 'POST':
@@ -649,8 +606,6 @@ class OAuthRemoteApp(object):
                 data=to_bytes(body, self.encoding),
                 method=self.access_token_method,
             )
-            print "POST"
-            print resp
         elif self.access_token_method == 'GET':
             qs = client.prepare_request_body(**remote_args)
             url = self.expand_url(self.access_token_url)
@@ -659,8 +614,6 @@ class OAuthRemoteApp(object):
                 url,
                 method=self.access_token_method,
             )
-            print "GET"
-            print resp
         else:
             raise OAuthException(
                 'Unsupported access_token_method: %s' %
@@ -684,8 +637,6 @@ class OAuthRemoteApp(object):
     def authorized_handler(self, f):
         @wraps(f)
         def decorated(*args, **kwargs):
-            print "Inside authorized_handler"
-            print "session authorized_handler {}".format(session)
             if 'oauth_verifier' in request.args:
                 try:
                     data = self.handle_oauth1_response()

@@ -70,7 +70,9 @@ def tweet():
 
 @app.route('/login')
 def login():
+    print "Twitter login"
     callback_url = url_for('oauthorized', next=request.args.get('next'))
+    print "login callback url {}".format(callback_url)
     return twitter.authorize(callback=callback_url or request.referrer or None)
 
 
@@ -83,6 +85,7 @@ def logout():
 @app.route('/oauthorized')
 @twitter.authorized_handler
 def oauthorized(resp):
+    print "oauthorized in twitter.py {}".format(resp)
     if resp is None:
         flash('You denied the request to sign in.')
     else:
