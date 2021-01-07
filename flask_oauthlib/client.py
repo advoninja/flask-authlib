@@ -7,7 +7,12 @@
 
     :copyright: (c) 2013 - 2014 by Hsiaoming Yang.
 """
+from __future__ import print_function
 
+from future import standard_library
+standard_library.install_aliases()
+from builtins import str
+from builtins import object
 import logging
 import oauthlib.oauth1
 import oauthlib.oauth2
@@ -18,7 +23,7 @@ from werkzeug import url_quote, url_decode, url_encode
 from werkzeug import parse_options_header, cached_property
 from .utils import to_bytes
 try:
-    from urlparse import urljoin
+    from urllib.parse import urljoin
     import urllib2 as http
 except ImportError:
     from urllib import request as http
@@ -353,7 +358,7 @@ class OAuthRemoteApp(object):
             return resp, content
         except http.HTTPError as resp:
             content = resp.read()
-            print content
+            print(content)
             resp.close()
             return resp, content
 
@@ -497,7 +502,7 @@ class OAuthRemoteApp(object):
                 **params
             )
         response = redirect(url)
-        print "response {}".format(response)
+        print("response {}".format(response))
         # response.set_cookie('_secret_tw', secret)
         if self.request_token_url:
             response.set_cookie('_tok_tw', str(token_secret))
@@ -530,7 +535,7 @@ class OAuthRemoteApp(object):
         )
         log.debug('Generate request token header %r', headers)
         resp, content = self.http_request(uri, headers)
-        print "generate_request_token res  {} content {} uri {} headrers {}".format(resp,content,uri,headers)
+        print("generate_request_token res  {} content {} uri {} headrers {}".format(resp,content,uri,headers))
         if resp.code not in (200, 201):
             raise OAuthException(
                 'Failed to generate request token',
@@ -621,8 +626,8 @@ class OAuthRemoteApp(object):
             )
 
         data = parse_response(resp, content, content_type=self.content_type)
-        print "Final Response"
-        print resp.code, resp.msg
+        print("Final Response")
+        print(resp.code, resp.msg)
         if resp.code not in (200, 201):
             raise OAuthException(
                 'Invalid response from %s' % self.name,
