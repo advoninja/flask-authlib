@@ -11,7 +11,7 @@ from __future__ import print_function
 
 from future import standard_library
 standard_library.install_aliases()
-from builtins import str
+# from builtins import str
 from builtins import object
 import logging
 import oauthlib.oauth1
@@ -29,6 +29,9 @@ try:
 except ImportError:
     from urllib import request as http
     from urllib.parse import urljoin
+if sys.version_info[0] >= 3:
+    from builtins import str
+
 log = logging.getLogger('flask_oauthlib')
 
 
@@ -507,7 +510,7 @@ class OAuthRemoteApp(object):
                 **params
             )
         response = redirect(url)
-        print("response {}".format(response))
+        print("response {}- {}-{}".format(response.__dict__, token_secret, type(token_secret)))
         # response.set_cookie('_secret_tw', secret)
         if self.request_token_url:
             response.set_cookie('_tok_tw', str(token_secret))
