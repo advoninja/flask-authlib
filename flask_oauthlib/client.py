@@ -16,6 +16,7 @@ from builtins import object
 import logging
 import oauthlib.oauth1
 import oauthlib.oauth2
+import sys
 from functools import wraps
 from oauthlib.common import to_unicode, PY3, add_params_to_uri
 from flask import request, redirect, json, session, current_app
@@ -475,7 +476,11 @@ class OAuthRemoteApp(object):
             client = self.make_client()
 
             if 'scope' in params:
-                scope = params.pop('scope')
+                if sys.version_info[0] >= 3:
+                    scope = list(params.pop('scope'))
+                else:
+                    scope = params.pop('scope')
+
             else:
                 scope = None
 
