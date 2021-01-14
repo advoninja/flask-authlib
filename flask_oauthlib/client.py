@@ -463,6 +463,7 @@ class OAuthRemoteApp(object):
         """
         params = dict(self.request_token_params) or {}
         params.update(**kwargs)
+        token_secret = None
         if self.request_token_url:
             token_secret = self.generate_request_token(callback)
             token = token_secret[0]
