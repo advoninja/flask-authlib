@@ -23,7 +23,7 @@ from werkzeug import url_quote, url_decode, url_encode
 from werkzeug import parse_options_header, cached_property
 from .utils import to_bytes
 try:
-    from urllib.parse import urljoin
+    from urlparse import urljoin
     import urllib2 as http
 except ImportError:
     from urllib import request as http
